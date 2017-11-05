@@ -2,6 +2,7 @@ package com.example.zone3.cryptocoinconverter.Adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -82,24 +83,24 @@ public class CryptoAdapter extends RecyclerView.Adapter<CryptoAdapter.MyViewHold
 
 //        Glide.with(mContext).load(ContextCompat.getDrawable(mContext,cryptoConver.getCurrency().getImageUrl())).into(holder.currency);
 //        Glide.with(mContext).load(ContextCompat.getDrawable(mContext,cryptoConver.getCryptoType().getImageUrl())).into(holder.crypto);
+            new NetworkHelper().loadJsonObject(this.mContext, NetworkController.url + cryptoConver.getCryptoType().getCode() + "&tsyms=" + cryptoConver.getCurrency().getCode(), Request.Method.GET, null, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d("regester", "onResponse:" + response);
+                    try {
+                        holder.price.setText(cryptoConver.getCurrency().getSign() + " " + response.getString(cryptoConver.getCurrency().getCode()));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
-        new NetworkHelper().loadJsonObject(this.mContext, NetworkController.url + cryptoConver.getCryptoType().getCode() +"&tsyms=" + cryptoConver.getCurrency().getCode(), Request.Method.GET, null, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.d("regester", "onResponse:" + response);
-                try {
-                    holder.price.setText(cryptoConver.getCurrency().getSign() + " " + response.getString(cryptoConver.getCurrency().getCode()));
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(mContext,"Check internet Connection",Toast.LENGTH_LONG).show();
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
+                }
+            });
 
         holder.containerView.setOnClickListener(new View.OnClickListener() {
             @Override

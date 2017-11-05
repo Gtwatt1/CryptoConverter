@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -52,8 +54,13 @@ public class MainActivity extends AppCompatActivity {
         initCollapsingToolbar();
         db = new DataBaseHandler(this);
 
+        if (NetworkHelper.haveNetworkConnection(this)) {
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        }else{
+            Snackbar.make(findViewById(R.id.main_content),"Connect to internet to get Current prices",Snackbar.LENGTH_SHORT).show();
+        }
+
+            recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         cryptoConverList = db.getAllCryptoConv();
         if (cryptoConverList.size() < 0) {
