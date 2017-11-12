@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public enum Currencies {
 
-    EURO("EUR", R.drawable.flagofeu, "European Euro", "£"),
+    EURO("EUR", R.drawable.flagofeu, "European Euro", "€"),
     YEN("JPY",R.drawable.flagofjapan,"Japanese yen", "¥"),
     POUND("GBP",R.drawable.flagofunitedkingdom, "Pound Sterling", "£"),
     SWISS("CHF",R.drawable.flagofswitzerland, "Swiss Franc", "CHF"),

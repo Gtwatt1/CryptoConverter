@@ -21,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.example.zone3.cryptocoinconverter.Model.CryptoConver;
+import com.example.zone3.cryptocoinconverter.database.DataBaseHandler;
 import com.example.zone3.cryptocoinconverter.network.NetworkController;
 import com.example.zone3.cryptocoinconverter.network.NetworkHelper;
 import com.example.zone3.cryptocoinconverter.R;
@@ -41,8 +42,12 @@ public class CryptoAdapter extends RecyclerView.Adapter<CryptoAdapter.MyViewHold
     private Context mContext;
     private List<CryptoConver> cryptoConverList;
 
+    public void reloadData() {
+        notifyDataSetChanged();
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public ImageView crypto, currency;
+        public ImageView crypto, currency, delete;
         public TextView price, overflow;
         public View containerView;
         private Context mContext;
@@ -53,7 +58,8 @@ public class CryptoAdapter extends RecyclerView.Adapter<CryptoAdapter.MyViewHold
             crypto = (ImageView) view.findViewById(R.id.crypto);
             currency = (ImageView) view.findViewById(R.id.currency);
             price = (TextView) view.findViewById(R.id.price);
-            containerView = (View)view.findViewById(R.id. container_view);
+            containerView = view.findViewById(R.id. container_view);
+            delete = (ImageView)view.findViewById(R.id.delete);
         }
 
         public Context getContext() {
@@ -76,14 +82,22 @@ public class CryptoAdapter extends RecyclerView.Adapter<CryptoAdapter.MyViewHold
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
         final CryptoConver cryptoConver = cryptoConverList.get(position);
         holder.currency.setImageDrawable(ContextCompat.getDrawable(mContext,cryptoConver.getCurrency().getImageUrl()));
         holder.crypto.setImageDrawable(ContextCompat.getDrawable(mContext,cryptoConver.getCryptoType().getImageUrl()));
+        Toast.makeText(mContext,"Retrieving latest Prices",Toast.LENGTH_SHORT).show();
 
-//        Glide.with(mContext).load(ContextCompat.getDrawable(mContext,cryptoConver.getCurrency().getImageUrl())).into(holder.currency);
-//        Glide.with(mContext).load(ContextCompat.getDrawable(mContext,cryptoConver.getCryptoType().getImageUrl())).into(holder.crypto);
-            new NetworkHelper().loadJsonObject(this.mContext, NetworkController.url + cryptoConver.getCryptoType().getCode() + "&tsyms=" + cryptoConver.getCurrency().getCode(), Request.Method.GET, null, null, new Response.Listener<JSONObject>() {
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DataBaseHandler(mContext).deleteCryptoConver(cryptoConver);
+                cryptoConverList.remove(position);
+                notifyDataSetChanged();
+            }
+        });
+
+        new NetworkHelper().loadJsonObject(this.mContext, NetworkController.url + cryptoConver.getCryptoType().getCode() + "&tsyms=" + cryptoConver.getCurrency().getCode(), Request.Method.GET, null, null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.d("regester", "onResponse:" + response);
@@ -97,10 +111,10 @@ public class CryptoAdapter extends RecyclerView.Adapter<CryptoAdapter.MyViewHold
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(mContext,"Check internet Connection",Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext,"Check internet Connection",Toast.LENGTH_SHORT).show();
 
                 }
-            });
+        });
 
         holder.containerView.setOnClickListener(new View.OnClickListener() {
             @Override

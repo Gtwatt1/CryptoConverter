@@ -76,11 +76,7 @@ public class SpinnerAdapter extends BaseAdapter {
     }
 
 
-    public int getImage(String imageName) {
 
-        int drawableResourceId = context.getResources().getIdentifier(imageName, "drawable", context.getPackageName());
-        return drawableResourceId;
-    }
 
 
     private class ViewHolder {

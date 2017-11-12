@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         cryptoConverList = db.getAllCryptoConv();
-        if (cryptoConverList.size() < 0) {
+        if (cryptoConverList.size() <= 0) {
             prepareDummyData();
         }
         Collections.reverse(cryptoConverList);
@@ -152,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_reload) {
+            adapter.reloadData();
+
             return true;
         }
 
